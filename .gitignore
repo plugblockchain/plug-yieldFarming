@@ -3,6 +3,7 @@ node_modules
 # Buidler files
 cache
 artifacts
+bin/
 
 # Coverage
 coverage
@@ -14,4 +15,7 @@ config.ts
 
 # IDE settings
 .idea/
+.vscode/
 typechain/
+soljson-v0.6.0+commit.26b70077.js
+

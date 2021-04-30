@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract Staking is ReentrancyGuard {
     using SafeMath for uint256;
 
-    uint128 constant private BASE_MULTIPLIER = uint128(1 * 10 ** 18);
+    uint128 private constant BASE_MULTIPLIER = uint128(1 * 10**18);
 
     // timestamp for the epoch 1
     // everything before that is considered epoch 0 which won't have a reward but allows for the initial stake
@@ -37,16 +37,33 @@ contract Staking is ReentrancyGuard {
     }
 
     // balanceCheckpoints[user][token][]
-    mapping(address => mapping(address => Checkpoint[])) private balanceCheckpoints;
+    mapping(address => mapping(address => Checkpoint[]))
+        private balanceCheckpoints;
 
     mapping(address => uint128) private lastWithdrawEpochId;
 
-    event Deposit(address indexed user, address indexed tokenAddress, uint256 amount);
-    event Withdraw(address indexed user, address indexed tokenAddress, uint256 amount);
-    event ManualEpochInit(address indexed caller, uint128 indexed epochId, address[] tokens);
-    event EmergencyWithdraw(address indexed user, address indexed tokenAddress, uint256 amount);
+    event Deposit(
+        address indexed user,
+        address indexed tokenAddress,
+        uint256 amount
+    );
+    event Withdraw(
+        address indexed user,
+        address indexed tokenAddress,
+        uint256 amount
+    );
+    event ManualEpochInit(
+        address indexed caller,
+        uint128 indexed epochId,
+        address[] tokens
+    );
+    event EmergencyWithdraw(
+        address indexed user,
+        address indexed tokenAddress,
+        uint256 amount
+    );
 
-    constructor (uint256 _epoch1Start, uint256 _epochDuration) public {
+    constructor(uint256 _epoch1Start, uint256 _epochDuration) public {
         epoch1Start = _epoch1Start;
         epochDuration = _epochDuration;
     }
@@ -54,14 +71,18 @@ contract Staking is ReentrancyGuard {
     /*
      * Stores `amount` of `tokenAddress` tokens for the `user` into the vault
      */
-    function deposit(address tokenAddress, uint256 amount) public nonReentrant {
+    function deposit(address tokenAddress, uint256 amount)
+        external
+        nonReentrant
+    {
         require(amount > 0, "Staking: Amount must be > 0");
 
         IERC20 token = IERC20(tokenAddress);
         uint256 allowance = token.allowance(msg.sender, address(this));
         require(allowance >= amount, "Staking: Token allowance too small");
 
-        balances[msg.sender][tokenAddress] = balances[msg.sender][tokenAddress].add(amount);
+        balances[msg.sender][tokenAddress] = balances[msg.sender][tokenAddress]
+            .add(amount);
 
         token.transferFrom(msg.sender, address(this), amount);
 
@@ -80,32 +101,53 @@ contract Staking is ReentrancyGuard {
         pNextEpoch.size = token.balanceOf(address(this));
         pNextEpoch.set = true;
 
-        Checkpoint[] storage checkpoints = balanceCheckpoints[msg.sender][tokenAddress];
+        Checkpoint[] storage checkpoints =
+            balanceCheckpoints[msg.sender][tokenAddress];
 
-        uint256 balanceBefore = getEpochUserBalance(msg.sender, tokenAddress, currentEpoch);
+        uint256 balanceBefore =
+            getEpochUserBalance(msg.sender, tokenAddress, currentEpoch);
 
         // if there's no checkpoint yet, it means the user didn't have any activity
         // we want to store checkpoints both for the current epoch and next epoch because
         // if a user does a withdraw, the current epoch can also be modified and
         // we don't want to insert another checkpoint in the middle of the array as that could be expensive
         if (checkpoints.length == 0) {
-            checkpoints.push(Checkpoint(currentEpoch, currentMultiplier, 0, amount));
+            checkpoints.push(
+                Checkpoint(currentEpoch, currentMultiplier, 0, amount)
+            );
 
             // next epoch => multiplier is 1, epoch deposits is 0
-            checkpoints.push(Checkpoint(currentEpoch + 1, BASE_MULTIPLIER, amount, 0));
+            checkpoints.push(
+                Checkpoint(currentEpoch + 1, BASE_MULTIPLIER, amount, 0)
+            );
         } else {
             uint256 last = checkpoints.length - 1;
 
             // the last action happened in an older epoch (e.g. a deposit in epoch 3, current epoch is >=5)
             if (checkpoints[last].epochId < currentEpoch) {
-                uint128 multiplier = computeNewMultiplier(
-                    getCheckpointBalance(checkpoints[last]),
-                    BASE_MULTIPLIER,
-                    amount,
-                    currentMultiplier
+                uint128 multiplier =
+                    computeNewMultiplier(
+                        getCheckpointBalance(checkpoints[last]),
+                        BASE_MULTIPLIER,
+                        amount,
+                        currentMultiplier
+                    );
+                checkpoints.push(
+                    Checkpoint(
+                        currentEpoch,
+                        multiplier,
+                        getCheckpointBalance(checkpoints[last]),
+                        amount
+                    )
                 );
-                checkpoints.push(Checkpoint(currentEpoch, multiplier, getCheckpointBalance(checkpoints[last]), amount));
-                checkpoints.push(Checkpoint(currentEpoch + 1, BASE_MULTIPLIER, balances[msg.sender][tokenAddress], 0));
+                checkpoints.push(
+                    Checkpoint(
+                        currentEpoch + 1,
+                        BASE_MULTIPLIER,
+                        balances[msg.sender][tokenAddress],
+                        0
+                    )
+                );
             }
             // the last action happened in the previous epoch
             else if (checkpoints[last].epochId == currentEpoch) {
@@ -115,29 +157,49 @@ contract Staking is ReentrancyGuard {
                     amount,
                     currentMultiplier
                 );
-                checkpoints[last].newDeposits = checkpoints[last].newDeposits.add(amount);
+                checkpoints[last].newDeposits = checkpoints[last]
+                    .newDeposits
+                    .add(amount);
 
-                checkpoints.push(Checkpoint(currentEpoch + 1, BASE_MULTIPLIER, balances[msg.sender][tokenAddress], 0));
+                checkpoints.push(
+                    Checkpoint(
+                        currentEpoch + 1,
+                        BASE_MULTIPLIER,
+                        balances[msg.sender][tokenAddress],
+                        0
+                    )
+                );
             }
             // the last action happened in the current epoch
             else {
-                if (last >= 1 && checkpoints[last - 1].epochId == currentEpoch) {
+                if (
+                    last >= 1 && checkpoints[last - 1].epochId == currentEpoch
+                ) {
                     checkpoints[last - 1].multiplier = computeNewMultiplier(
                         getCheckpointBalance(checkpoints[last - 1]),
                         checkpoints[last - 1].multiplier,
                         amount,
                         currentMultiplier
                     );
-                    checkpoints[last - 1].newDeposits = checkpoints[last - 1].newDeposits.add(amount);
+                    checkpoints[last - 1].newDeposits = checkpoints[last - 1]
+                        .newDeposits
+                        .add(amount);
                 }
 
-                checkpoints[last].startBalance = balances[msg.sender][tokenAddress];
+                checkpoints[last].startBalance = balances[msg.sender][
+                    tokenAddress
+                ];
             }
         }
 
-        uint256 balanceAfter = getEpochUserBalance(msg.sender, tokenAddress, currentEpoch);
+        uint256 balanceAfter =
+            getEpochUserBalance(msg.sender, tokenAddress, currentEpoch);
 
-        poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][currentEpoch].size.add(balanceAfter.sub(balanceBefore));
+        poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][
+            currentEpoch
+        ]
+            .size
+            .add(balanceAfter.sub(balanceBefore));
 
         emit Deposit(msg.sender, tokenAddress, amount);
     }
@@ -145,10 +207,17 @@ contract Staking is ReentrancyGuard {
     /*
      * Removes the deposit of the user and sends the amount of `tokenAddress` back to the `user`
      */
-    function withdraw(address tokenAddress, uint256 amount) public nonReentrant {
-        require(balances[msg.sender][tokenAddress] >= amount, "Staking: balance too small");
+    function withdraw(address tokenAddress, uint256 amount)
+        external
+        nonReentrant
+    {
+        require(
+            balances[msg.sender][tokenAddress] >= amount,
+            "Staking: balance too small"
+        );
 
-        balances[msg.sender][tokenAddress] = balances[msg.sender][tokenAddress].sub(amount);
+        balances[msg.sender][tokenAddress] = balances[msg.sender][tokenAddress]
+            .sub(amount);
 
         IERC20 token = IERC20(tokenAddress);
         token.transfer(msg.sender, amount);
@@ -169,16 +238,28 @@ contract Staking is ReentrancyGuard {
         pNextEpoch.size = token.balanceOf(address(this));
         pNextEpoch.set = true;
 
-        Checkpoint[] storage checkpoints = balanceCheckpoints[msg.sender][tokenAddress];
+        Checkpoint[] storage checkpoints =
+            balanceCheckpoints[msg.sender][tokenAddress];
         uint256 last = checkpoints.length - 1;
 
         // note: it's impossible to have a withdraw and no checkpoints because the balance would be 0 and revert
 
         // there was a deposit in an older epoch (more than 1 behind [eg: previous 0, now 5]) but no other action since then
         if (checkpoints[last].epochId < currentEpoch) {
-            checkpoints.push(Checkpoint(currentEpoch, BASE_MULTIPLIER, balances[msg.sender][tokenAddress], 0));
+            checkpoints.push(
+                Checkpoint(
+                    currentEpoch,
+                    BASE_MULTIPLIER,
+                    balances[msg.sender][tokenAddress],
+                    0
+                )
+            );
 
-            poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][currentEpoch].size.sub(amount);
+            poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][
+                currentEpoch
+            ]
+                .size
+                .sub(amount);
         }
         // there was a deposit in the `epochId - 1` epoch => we have a checkpoint for the current epoch
         else if (checkpoints[last].epochId == currentEpoch) {
@@ -186,23 +267,33 @@ contract Staking is ReentrancyGuard {
             checkpoints[last].newDeposits = 0;
             checkpoints[last].multiplier = BASE_MULTIPLIER;
 
-            poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][currentEpoch].size.sub(amount);
+            poolSize[tokenAddress][currentEpoch].size = 
+                poolSize[tokenAddress][currentEpoch]
+                    .size
+                    .sub(amount);
         }
         // there was a deposit in the current epoch
         else {
             Checkpoint storage currentEpochCheckpoint = checkpoints[last - 1];
 
-            uint256 balanceBefore = getCheckpointEffectiveBalance(currentEpochCheckpoint);
+            uint256 balanceBefore =
+                getCheckpointEffectiveBalance(currentEpochCheckpoint);
 
             // in case of withdraw, we have 2 branches:
             // 1. the user withdraws less than he added in the current epoch
             // 2. the user withdraws more than he added in the current epoch (including 0)
             if (amount < currentEpochCheckpoint.newDeposits) {
-                uint128 avgDepositMultiplier = uint128(
-                    balanceBefore.sub(currentEpochCheckpoint.startBalance).mul(BASE_MULTIPLIER).div(currentEpochCheckpoint.newDeposits)
-                );
+                uint128 avgDepositMultiplier =
+                    uint128(
+                        balanceBefore
+                            .sub(currentEpochCheckpoint.startBalance)
+                            .mul(BASE_MULTIPLIER)
+                            .div(currentEpochCheckpoint.newDeposits)
+                    );
 
-                currentEpochCheckpoint.newDeposits = currentEpochCheckpoint.newDeposits.sub(amount);
+                currentEpochCheckpoint.newDeposits = currentEpochCheckpoint
+                    .newDeposits
+                    .sub(amount);
 
                 currentEpochCheckpoint.multiplier = computeNewMultiplier(
                     currentEpochCheckpoint.startBalance,
@@ -211,16 +302,21 @@ contract Staking is ReentrancyGuard {
                     avgDepositMultiplier
                 );
             } else {
-                currentEpochCheckpoint.startBalance = currentEpochCheckpoint.startBalance.sub(
-                    amount.sub(currentEpochCheckpoint.newDeposits)
-                );
+                currentEpochCheckpoint.startBalance = currentEpochCheckpoint
+                    .startBalance
+                    .sub(amount.sub(currentEpochCheckpoint.newDeposits));
                 currentEpochCheckpoint.newDeposits = 0;
                 currentEpochCheckpoint.multiplier = BASE_MULTIPLIER;
             }
 
-            uint256 balanceAfter = getCheckpointEffectiveBalance(currentEpochCheckpoint);
+            uint256 balanceAfter =
+                getCheckpointEffectiveBalance(currentEpochCheckpoint);
 
-            poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][currentEpoch].size.sub(balanceBefore.sub(balanceAfter));
+            poolSize[tokenAddress][currentEpoch].size = poolSize[tokenAddress][
+                currentEpoch
+            ]
+                .size
+                .sub(balanceBefore.sub(balanceAfter));
 
             checkpoints[last].startBalance = balances[msg.sender][tokenAddress];
         }
@@ -236,15 +332,21 @@ contract Staking is ReentrancyGuard {
     function manualEpochInit(address[] memory tokens, uint128 epochId) public {
         require(epochId <= getCurrentEpoch(), "can't init a future epoch");
 
-        for (uint i = 0; i < tokens.length; i++) {
+        for (uint256 i = 0; i < tokens.length; i++) {
             Pool storage p = poolSize[tokens[i]][epochId];
 
             if (epochId == 0) {
                 p.size = uint256(0);
                 p.set = true;
             } else {
-                require(!epochIsInitialized(tokens[i], epochId), "Staking: epoch already initialized");
-                require(epochIsInitialized(tokens[i], epochId - 1), "Staking: previous epoch not initialized");
+                require(
+                    !epochIsInitialized(tokens[i], epochId),
+                    "Staking: epoch already initialized"
+                );
+                require(
+                    epochIsInitialized(tokens[i], epochId - 1),
+                    "Staking: previous epoch not initialized"
+                );
 
                 p.size = poolSize[tokens[i]][epochId - 1].size;
                 p.set = true;
@@ -254,8 +356,11 @@ contract Staking is ReentrancyGuard {
         emit ManualEpochInit(msg.sender, epochId, tokens);
     }
 
-    function emergencyWithdraw(address tokenAddress) public {
-        require((getCurrentEpoch() - lastWithdrawEpochId[tokenAddress]) >= 10, "At least 10 epochs must pass without success");
+    function emergencyWithdraw(address tokenAddress) external {
+        require(
+            (getCurrentEpoch() - lastWithdrawEpochId[tokenAddress]) >= 10,
+            "At least 10 epochs must pass without success"
+        );
 
         uint256 totalUserBalance = balances[msg.sender][tokenAddress];
         require(totalUserBalance > 0, "Amount must be > 0");
@@ -273,7 +378,11 @@ contract Staking is ReentrancyGuard {
      * A deposit will only change the next epoch balance.
      * A withdraw will decrease the current epoch (and subsequent) balance.
      */
-    function getEpochUserBalance(address user, address token, uint128 epochId) public view returns (uint256) {
+    function getEpochUserBalance(
+        address user,
+        address token,
+        uint128 epochId
+    ) public view returns (uint256) {
         Checkpoint[] storage checkpoints = balanceCheckpoints[user][token];
 
         // if there are no checkpoints, it means the user never deposited any tokens, so the balance is 0
@@ -281,8 +390,8 @@ contract Staking is ReentrancyGuard {
             return 0;
         }
 
-        uint min = 0;
-        uint max = checkpoints.length - 1;
+        uint256 min = 0;
+        uint256 max = checkpoints.length - 1;
 
         // shortcut for blocks newer than the latest checkpoint == current balance
         if (epochId >= checkpoints[max].epochId) {
@@ -291,7 +400,7 @@ contract Staking is ReentrancyGuard {
 
         // binary search of the value in the array
         while (max > min) {
-            uint mid = (max + min + 1) / 2;
+            uint256 mid = (max + min + 1) / 2;
             if (checkpoints[mid].epochId <= epochId) {
                 min = mid;
             } else {
@@ -305,7 +414,11 @@ contract Staking is ReentrancyGuard {
     /*
      * Returns the amount of `token` that the `user` has currently staked
      */
-    function balanceOf(address user, address token) public view returns (uint256) {
+    function balanceOf(address user, address token)
+        external
+        view
+        returns (uint256)
+    {
         return balances[user][token];
     }
 
@@ -323,7 +436,11 @@ contract Staking is ReentrancyGuard {
     /*
      * Returns the total amount of `tokenAddress` that was locked from beginning to end of epoch identified by `epochId`
      */
-    function getEpochPoolSize(address tokenAddress, uint128 epochId) public view returns (uint256) {
+    function getEpochPoolSize(address tokenAddress, uint128 epochId)
+        external
+        view
+        returns (uint256)
+    {
         // Premises:
         // 1. it's impossible to have gaps of uninitialized epochs
         // - any deposit or withdraw initialize the current epoch which requires the previous one to be initialized
@@ -349,15 +466,28 @@ contract Staking is ReentrancyGuard {
         uint128 currentEpoch = getCurrentEpoch();
         uint256 currentEpochEnd = epoch1Start + currentEpoch * epochDuration;
         uint256 timeLeft = currentEpochEnd - block.timestamp;
-        uint128 multiplier = uint128(timeLeft * BASE_MULTIPLIER / epochDuration);
+        uint128 multiplier =
+            uint128((timeLeft * BASE_MULTIPLIER) / epochDuration);
 
         return multiplier;
     }
 
-    function computeNewMultiplier(uint256 prevBalance, uint128 prevMultiplier, uint256 amount, uint128 currentMultiplier) public pure returns (uint128) {
-        uint256 prevAmount = prevBalance.mul(prevMultiplier).div(BASE_MULTIPLIER);
-        uint256 addAmount = amount.mul(currentMultiplier).div(BASE_MULTIPLIER);
-        uint128 newMultiplier = uint128(prevAmount.add(addAmount).mul(BASE_MULTIPLIER).div(prevBalance.add(amount)));
+    function computeNewMultiplier(
+        uint256 prevBalance,
+        uint128 prevMultiplier,
+        uint256 amount,
+        uint128 currentMultiplier
+    ) public pure returns (uint128) {
+        uint256 prevAmount =
+            prevBalance.mul(prevMultiplier).div(BASE_MULTIPLIER);
+        uint256 addAmount = 
+            amount.mul(currentMultiplier).div(BASE_MULTIPLIER);
+        uint128 newMultiplier =
+            uint128(
+                prevAmount.add(addAmount).mul(BASE_MULTIPLIER).div(
+                    prevBalance.add(amount)
+                )
+            );
 
         return newMultiplier;
     }
@@ -365,15 +495,27 @@ contract Staking is ReentrancyGuard {
     /*
      * Checks if an epoch is initialized, meaning we have a pool size set for it
      */
-    function epochIsInitialized(address token, uint128 epochId) public view returns (bool) {
+    function epochIsInitialized(address token, uint128 epochId)
+        public
+        view
+        returns (bool)
+    {
         return poolSize[token][epochId].set;
     }
 
-    function getCheckpointBalance(Checkpoint memory c) internal pure returns (uint256) {
+    function getCheckpointBalance(Checkpoint memory c)
+        internal
+        pure
+        returns (uint256)
+    {
         return c.startBalance.add(c.newDeposits);
     }
 
-    function getCheckpointEffectiveBalance(Checkpoint memory c) internal pure returns (uint256) {
+    function getCheckpointEffectiveBalance(Checkpoint memory c)
+        internal
+        pure
+        returns (uint256)
+    {
         return getCheckpointBalance(c).mul(c.multiplier).div(BASE_MULTIPLIER);
     }
 }
