@@ -1,0 +1,49 @@
+--- # install package and compile smart contract
+parameters:
+  - name: image_from
+    type: string
+    default: ubuntu-latest
+  - name: network
+    type: string
+    default: kovan
+
+jobs:
+  - job: Deployment
+    displayName: Install Packages
+    ${{ if eq(parameters.agent_pool, 'ubuntu-latest') }}:
+      pool:
+        vmImage: "ubuntu-20.04"
+    ${{ if eq(parameters.agent_pool, 'vmssagent')}}:
+      pool:
+        name: "vmssagent"
+    container: ${{ parameters.image_from }}
+    dependsOn:
+      - Installation
+    steps:
+      - download: current
+        artifact: artifacts
+      - download: current
+        artifact: node_modules
+      - task: Bash@3
+        name: CommunityVault
+        displayName: Deploy CommunityVault
+        inputs:
+          targetType: "inline"
+          script: |
+            export CONTRACT_ADDRESS=$(npx hardhat run --network ${{ parameters.network}} scripts/deploy.js | grep '^0x[a-fA-F0-9]{40}$')
+          workingDirectory: $(System.DefaultWorkingDirectory)
+        env:
+          WALLET_ADDRESS: $(WALLET_ADDRESS_DEVELOPMENT)
+      - task: Bash@3
+        name: Stacking
+        displayName: Deploy Stacking
+        inputs:
+          targetType: "inline"
+          script: |
+            $(CommunityVault.Address)
+            export CONTRACT_ADDRESS=$(npx hardhat run --network ${{ parameters.network}} scripts/deploy.js | grep '^0x[a-fA-F0-9]{40}$')
+            echo "##vso[task.setvariable variable=Address;isOutput=true]$CONTRACT_ADDRESS"
+          workingDirectory: $(System.DefaultWorkingDirectory)
+          env:
+            WALLET_ADDRESS: $(WALLET_ADDRESS_DEVELOPMENT)
+...

@@ -1,0 +1,27 @@
+--- # azure deployment pipeline
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    exclude:
+      - readme.MD
+      - test-results.md
+
+resources:
+  containers:
+    - container: ubuntu_devops
+      image: ""
+      endpoint: ""
+      options: --user root
+  repositories:
+    - repository: self
+
+stages:
+  - stage: Development
+    displayName: Smart Contract
+    variables:
+      - group: smart_contract_wallet_development
+    jobs:
+      - template: ./templates/install.yml
+      - template: ./templates/deploy.yml

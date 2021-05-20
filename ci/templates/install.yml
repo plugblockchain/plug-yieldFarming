@@ -1,0 +1,31 @@
+--- # install package and compile smart contract
+parameters:
+  - name: image_from
+    type: string
+    default: ubuntu-latest
+
+jobs:
+  - job: Installation
+    displayName: Install Packages
+    ${{ if eq(parameters.agent_pool, 'ubuntu-latest') }}:
+      pool:
+        vmImage: "ubuntu-20.04"
+    ${{ if eq(parameters.agent_pool, 'vmssagent')}}:
+      pool:
+        name: "vmssagent"
+    container: ${{ parameters.image_from }}
+    steps:
+      - task: Bash@3
+        displayName: NPM Install
+        inputs:
+          targetType: "inline"
+          script: |
+            npm install
+            npx hardhat compile
+            npx hardhat test
+          workingDirectory: $(System.DefaultWorkingDirectory)
+      - publish: $(System.DefaultWorkingDirectory)/artifacts
+        artifact: artifacts
+      - publish: $(System.DefaultWorkingDirectory)/node_modules
+        artifact: node_modules
+...
