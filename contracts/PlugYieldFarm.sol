@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.6.0;
+pragma solidity 0.6.2;
 
 import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -13,7 +13,9 @@ contract PlugYieldFarm {
     // constants
     uint256 public constant TOTAL_DISTRIBUTED_AMOUNT = 2_000_000;
     uint256 public constant NR_OF_EPOCHS = 25;
+
     uint128 public constant EPOCHS_DELAYED_FROM_STAKING_CONTRACT = 0;
+    uint128 public lastInitializedEpoch;
 
     // state variables
 
@@ -26,7 +28,7 @@ contract PlugYieldFarm {
 
     uint256[] private epochs = new uint256[](NR_OF_EPOCHS + 1);
     uint256 private _totalAmountPerEpoch;
-    uint128 public lastInitializedEpoch;
+    
     mapping(address => uint128) private lastEpochIdHarvested;
     uint256 public epochDuration; // init from staking contract
     uint256 public epochStart; // init from staking contract
