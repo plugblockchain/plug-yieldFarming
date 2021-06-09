@@ -5,6 +5,18 @@
     "main": "index.js",
     "author": "Plug",
     "license": "Apache-2",
+    "scripts": {
+        "compile": "hardhat clean && hardhat compile",
+        "test": "hardhat test",
+        "compile-and-test": "npm run compile && hardhat test",
+        "coverage": "hardhat coverage --temp artifacts",
+        "compile-and-coverage": "npm run compile && hardhat coverage --temp artifacts",
+        "lint": "npm run lint:ts && npm run lint:sol",
+        "lint:fix": "npm run lint:ts:fix",
+        "lint:ts": "eslint . --ext .ts",
+        "lint:ts:fix": "eslint . --ext .ts --fix",
+        "lint:sol": "solhint --max-warnings 0 \"contracts/**/*.sol\""
+    },
     "devDependencies": {
         "@nomiclabs/hardhat-ethers": "^2.0.1",
         "@nomiclabs/hardhat-etherscan": "^2.1.1",
@@ -37,7 +49,9 @@
         "typechain": "^4.0.2",
         "typescript": "^4.2.2"
     },
-    "dependencies": {},
+    "dependencies": {
+        "@nomiclabs/buidler": "^1.4.8"
+    },
     "engines": {
         "yarn": "NO LONGER USED - Please use npm"
     }

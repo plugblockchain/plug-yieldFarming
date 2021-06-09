@@ -26,7 +26,7 @@ const cfg: HardhatUserConfig = {
         }
     },
 
-    defaultNetwork: "hardhat",
+    defaultNetwork: "kovan",
     networks: config.networks,
     etherscan: config.etherscan,
 
