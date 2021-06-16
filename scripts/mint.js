@@ -5,18 +5,20 @@ const hre = require("hardhat");
 
 async function main () {
 
-    const toAddress = '0x89F7e70c568d114Cd4Ce3b2d900dE595CDB514A8';
+    const mandy = '0x111dAE1358332dB4EDA6d00b684117eab2f604d0';
+    const kun = '0xa035F2A1fC34fec7EfbD2E9cA2d567c5Cc001d91';
+    const toAddress = kun;
 
     const [ac1, ac2, ac3] = await hre.ethers.getSigners();
     ac1Addr = await ac1.getAddress();
     ac2Addr = await ac2.getAddress();
     ac3Addr = await ac3.getAddress();
 
-    const PlugToken = await hre.ethers.getContractFactory('PlugToken')
-    const plugToken = await PlugToken.attach("0x78c3E13fdDC49f89feEB54C3FC47d7df611FA9BE");
+    const PlugToken = await hre.ethers.getContractFactory('USDCToken')
+    const plugToken = await PlugToken.attach("0xfCf872098b81cbe97b8Bc56c63E325c3c0b20569");
 
-    const tenPow18 = BigNumber.from(10).pow(18);
-    const amount = BigNumber.from(100).mul(tenPow18);
+    const tenPow18 = BigNumber.from(10).pow(6);
+    const amount = BigNumber.from(10000000).mul(tenPow18);
     await plugToken.mint(toAddress, amount);
     console.log(`Successfully mint ${amount}`);
 

@@ -11,7 +11,7 @@ contract PlugYieldFarm {
     using SafeMath for uint128;
 
     // constants
-    uint256 public constant TOTAL_DISTRIBUTED_AMOUNT = 2_000_000;
+    uint256 public constant TOTAL_DISTRIBUTED_AMOUNT = 150_000_000;
     uint256 public constant NR_OF_EPOCHS = 25;
     uint128 public constant EPOCHS_DELAYED_FROM_STAKING_CONTRACT = 0;
 
