@@ -3,13 +3,8 @@ const hre = require("hardhat");
 
 async function main () {
 
-    // const PlugToken = await hre.ethers.getContractFactory('USDCToken')
-    // const plugToken = await PlugToken.deploy(1000);
-    // await plugToken.deployed()
-    // console.log('Plug contract deployed to:', plugToken.address);
-
     const plugTokenAddr = '0x44bc9215EF25eBFD7Be7C3679f20667480814af4';
-    const lpTokenAddr = '0x3e9e08c7f5cb913df2a9d6b58143c0096dc27a53';
+    const lpTokenAddr = '0x68559fe116232ad27f749261bca00bc7b8b5eb61';
     // const epoch1Start = 1623628800; //Monday, June 14, 2021 0:00:00 GMT 
     // const epochDuration = 604800; // 1 week
 
