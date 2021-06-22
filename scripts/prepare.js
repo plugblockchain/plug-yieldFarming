@@ -5,9 +5,10 @@ const hre = require("hardhat");
 
 async function main () {
 
-    const yfAddress = '0x97C07AD3f77942B7a96f74dC8596279c01B5b0B7';
-    const cvAddress = '0x035AC5BC586Cc8b31eD8Bd42051cE595DeB84Eea';
-    const mintAmount = 2_000_000;
+    const rewardTokenAddr = '0x44bc9215EF25eBFD7Be7C3679f20667480814af4';
+    const yfAddress = '0xfCac122EA3B0458c0051332d19040bed6C7DE9e9';
+    const cvAddress = '0x80957883d147376ACF8c073c4297E9DD068cd9BC';
+    const mintAmount = 150_000_000;
 
     const [ac1, ac2, ac3] = await hre.ethers.getSigners();
     ac1Addr = await ac1.getAddress();
@@ -15,7 +16,7 @@ async function main () {
     ac3Addr = await ac3.getAddress();
 
     const PlugToken = await hre.ethers.getContractFactory('PlugToken')
-    const plugToken = await PlugToken.attach("0x78c3E13fdDC49f89feEB54C3FC47d7df611FA9BE");
+    const plugToken = await PlugToken.attach(rewardTokenAddr);
 
     const CV = await hre.ethers.getContractFactory('CommunityVault')
     const cv = await CV.attach(cvAddress);

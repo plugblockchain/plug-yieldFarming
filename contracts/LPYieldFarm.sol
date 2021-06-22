@@ -5,13 +5,13 @@ import "@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IStaking.sol";
 
-contract PlugYieldFarm {
+contract LPYieldFarm {
     // lib
     using SafeMath for uint256;
     using SafeMath for uint128;
 
     // constants
-    uint256 public constant TOTAL_DISTRIBUTED_AMOUNT = 150_000_000;
+    uint256 public constant TOTAL_DISTRIBUTED_AMOUNT = 175_000_000;
     uint256 public constant NR_OF_EPOCHS = 25;
     uint128 public constant EPOCHS_DELAYED_FROM_STAKING_CONTRACT = 0;
 
