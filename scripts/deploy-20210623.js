@@ -4,12 +4,16 @@ const hre = require("hardhat");
 
 async function main () {
 
-    const plugTokenAddr = '0x44bc9215EF25eBFD7Be7C3679f20667480814af4';
-    const ethPlugLpTokenAddr = '0x402d4122bff42f2a4e2c32732827af4d476f5728';
-    const usdcPlugLpTokenAddr = '0x68559fe116232ad27f749261bca00bc7b8b5eb61';
-    const epoch1Start = 1624885200;
+    const plugTokenAddr = '0x47DA5456bC2e1ce391b645Ce80F2E97192e4976a';
+    const ethPlugLpTokenAddr = '0xee597f571c65c5abfa56a8128c4b7bb7fb31ebc6';
+    const usdcPlugLpTokenAddr = '0x1fead6b98371793a0897b3d1a9402e4bb9906775';
+    const epoch1Start = 1625443200; // Date and time (GMT): Monday, July 5, 2021 0:00:00 
     const epochDuration = 604800; // 1 week
 
+    const [deployer] = await hre.ethers.getSigners();
+    console.log("Deploying contracts with the account:", deployer.address);
+    console.log("Account balance before:", (await deployer.getBalance()).toString());
+  
     // deploy Staking
     const Staking = await hre.ethers.getContractFactory('Staking')
     const staking = await Staking.deploy(epoch1Start, epochDuration)
@@ -39,14 +43,15 @@ async function main () {
     await plugPool.deployed()
     console.log('PLUG Pool deployed to:', plugPool.address);
 
-    // set allowance
-    const [ac1] = await hre.ethers.getSigners();
-    const tenPow18 = BigNumber.from(10).pow(18);
-    const plugAmount = BigNumber.from(150_000_000).mul(tenPow18);
-    const lpAmount = BigNumber.from(175_000_000).mul(tenPow18);
-    await cv.connect(ac1).setAllowance(plugPool.address, plugAmount);
-    await cv.connect(ac1).setAllowance(ethPlugPool.address, lpAmount);
-    await cv.connect(ac1).setAllowance(usdcPlugPool.address, lpAmount);
+    // set allowance --- wait for transfer done
+    // const tenPow18 = BigNumber.from(10).pow(18);
+    // const plugAmount = BigNumber.from(150_000_000).mul(tenPow18);
+    // const lpAmount = BigNumber.from(175_000_000).mul(tenPow18);
+    // await cv.connect(deployer).setAllowance(plugPool.address, plugAmount);
+    // await cv.connect(deployer).setAllowance(ethPlugPool.address, lpAmount);
+    // await cv.connect(deployer).setAllowance(usdcPlugPool.address, lpAmount);
+
+    console.log("Account balance after:", (await deployer.getBalance()).toString());
 }
 
 main()

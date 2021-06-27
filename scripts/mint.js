@@ -7,18 +7,25 @@ async function main () {
 
     const mandy = '0x111dAE1358332dB4EDA6d00b684117eab2f604d0';
     const kun = '0xa035F2A1fC34fec7EfbD2E9cA2d567c5Cc001d91';
-    const toAddress = mandy;
+    const kun2 = '0x809c27D85B95317A11d1D97a011483029D1528EE';
+    const phil = '0x6d3Aa1bfB50bEE2e20F6D480Aa54Af5495996122';
+    const toAddress = kun2;
+    const toAmount = 10000000
 
-    const [ac1, ac2, ac3] = await hre.ethers.getSigners();
-    ac1Addr = await ac1.getAddress();
-    ac2Addr = await ac2.getAddress();
-    ac3Addr = await ac3.getAddress();
+    const tokenContract = 'PlugToken';
+    const tokenAddr = '0x44bc9215EF25eBFD7Be7C3679f20667480814af4';
+    const tokenDecimal = 18;
 
-    const PlugToken = await hre.ethers.getContractFactory('USDCToken')
-    const plugToken = await PlugToken.attach("0x0d757FbF1b0743Db0e6e02AA2A8f18D4c695a1F9");
+    // const [ac1, ac2, ac3] = await hre.ethers.getSigners();
+    // ac1Addr = await ac1.getAddress();
+    // ac2Addr = await ac2.getAddress();
+    // ac3Addr = await ac3.getAddress();
 
-    const tenPow18 = BigNumber.from(10).pow(6);
-    const amount = BigNumber.from(10000000).mul(tenPow18);
+    const PlugToken = await hre.ethers.getContractFactory(tokenContract);
+    const plugToken = await PlugToken.attach(tokenAddr);
+
+    const tenPow18 = BigNumber.from(10).pow(tokenDecimal);
+    const amount = BigNumber.from(toAmount).mul(tenPow18);
     await plugToken.mint(toAddress, amount);
     console.log(`Successfully mint ${amount}`);
 

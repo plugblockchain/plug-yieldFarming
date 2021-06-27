@@ -7,12 +7,14 @@
 
  [UniLP PLUG](https://etherscan.io/address/0xee597f571c65c5abfa56a8128c4b7bb7fb31ebc6#code)
 
- [Plug Yield Farm PLUG-USDC LP](TBD) TBD
+ [Plug Yield Farm PLUG-ETH LP](https://etherscan.io/address/0x6650e39D5D0c01b7e3298d3CA0D1ef8Ca85f2A5C)
 
- [Plug Yield Farm PLUG LP](TBD) **TBD**
+ [Plug Yield Farm PLUG-USDC LP](https://etherscan.io/address/0x9bc558a224dA1695ae1CEd9d3760249D0efaF5C0)
+
+ [Plug Yield Farm PLUG](https://etherscan.io/address/0x6F7E84C2B019B003f28E31aB6A0D4eD83199E3eB)
 
 
-## Kovan Playaround Test:
+# Kovan Playaround Test:
 [Plug](https://kovan.etherscan.io/address/0x78c3E13fdDC49f89feEB54C3FC47d7df611FA9BE) 
 [UniLP Plug-Eth](https://kovan.etherscan.io/address/0xfcC5A5E0a2039216f66963D2f1298e414a965942)
 
@@ -52,3 +54,16 @@
 [Add Liquidity ETH-PLUG](https://app.uniswap.org/#/add/v2/ETH/0x44bc9215EF25eBFD7Be7C3679f20667480814af4)
 
 [Add Liquidity USDC-PLUG](https://app.uniswap.org/#/add/v2/0x0d757FbF1b0743Db0e6e02AA2A8f18D4c695a1F9/0x44bc9215EF25eBFD7Be7C3679f20667480814af4)
+
+
+# Mainnet address
+
+Deploying contracts with the account: 0x916a914F3F910fDC5F45f09652e76B14d703aA55
+Account balance before: 999559000000000000
+Staking contract deployed to: 0x75c8534C6DfE777Ad7Bbc5e50B9EE868eBf52DEf
+CommunityVault deployed to: 0xe0BB6c11FC2caC863C4ebD3d6e8d7B1CdA3B6060
+ETH/PLUG Pool deployed to: 0x6650e39D5D0c01b7e3298d3CA0D1ef8Ca85f2A5C
+USDC/PLUG Pool deployed to: 0x9bc558a224dA1695ae1CEd9d3760249D0efaF5C0
+PLUG Pool deployed to: 0x6F7E84C2B019B003f28E31aB6A0D4eD83199E3eB
+Account balance after: 946361950000000000
+
