@@ -56,8 +56,7 @@
 [Add Liquidity USDC-PLUG](https://app.uniswap.org/#/add/v2/0x0d757FbF1b0743Db0e6e02AA2A8f18D4c695a1F9/0x44bc9215EF25eBFD7Be7C3679f20667480814af4)
 
 
-# Mainnet address
-
+# Mainnet address @2021.06.24
 Deploying contracts with the account: 0x916a914F3F910fDC5F45f09652e76B14d703aA55
 Account balance before: 999559000000000000
 Staking contract deployed to: 0x75c8534C6DfE777Ad7Bbc5e50B9EE868eBf52DEf
@@ -67,3 +66,10 @@ USDC/PLUG Pool deployed to: 0x9bc558a224dA1695ae1CEd9d3760249D0efaF5C0
 PLUG Pool deployed to: 0x6F7E84C2B019B003f28E31aB6A0D4eD83199E3eB
 Account balance after: 946361950000000000
 
+# Setting allowance @2021.07.07
+Setting Allowance with the account: 0x916a914F3F910fDC5F45f09652e76B14d703aA55
+Account balance before: 860894184374689841
+setting allowance 24000000000000000000000000 to plug pool
+setting allowance 28000000000000000000000000 to plug/eth pool
+setting allowance 28000000000000000000000000 to plug/usdc pool
+Account balance after: 858790884293934191
