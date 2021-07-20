@@ -17,7 +17,7 @@ task('accounts', 'Prints the list of accounts', async (_, { ethers }) => {
 
 const cfg: HardhatUserConfig = {
     solidity: {
-        version: '0.6.12',
+        version: '0.6.6',
         settings: {
             optimizer: {
                 enabled: true,
@@ -31,7 +31,7 @@ const cfg: HardhatUserConfig = {
     etherscan: config.etherscan,
 
     abiExporter: {
-        only: ['Staking', 'YieldFarm', 'YieldFarmLP', 'YieldFarmBond', 'CommunityVault', 'PlugToken', 'USDCToken'],
+        only: ['UniswapV2Router02'],
         clear: true,
     },
 
