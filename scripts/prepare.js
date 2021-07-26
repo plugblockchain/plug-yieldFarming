@@ -11,21 +11,24 @@ async function main () {
     const mintAmount = 150_000_000;
 
     const [ac1, ac2, ac3] = await hre.ethers.getSigners();
-    ac1Addr = await ac1.getAddress();
-    ac2Addr = await ac2.getAddress();
-    ac3Addr = await ac3.getAddress();
+    // ac1Addr = await ac1.getAddress();
+    // ac2Addr = await ac2.getAddress();
+    // ac3Addr = await ac3.getAddress();
 
     const PlugToken = await hre.ethers.getContractFactory('PlugToken')
     const plugToken = await PlugToken.attach(rewardTokenAddr);
+
+    const existingAllowanceForYf = await plugToken.allowance(cvAddress, yfAddress);
+    console.log(`Existing allowance for yf: ${existingAllowanceForYf}`)
 
     const CV = await hre.ethers.getContractFactory('CommunityVault')
     const cv = await CV.attach(cvAddress);
 
     const tenPow18 = BigNumber.from(10).pow(18);
-    const amount = BigNumber.from(mintAmount).mul(tenPow18);
-    await plugToken.mint(cvAddress, amount);
+    const amount = BigNumber.from(mintAmount).mul(tenPow18).add(existingAllowanceForYf);
+    // await plugToken.mint(cvAddress, amount);
     await cv.connect(ac1).setAllowance(yfAddress, amount);
-    console.log(`Successfully mint and allowance cv: ${amount/tenPow18}`);
+    console.log(`Successfully set allowance cv: ${amount/tenPow18}`);
 }
 
 main()
