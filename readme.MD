@@ -73,3 +73,13 @@ setting allowance 24000000000000000000000000 to plug pool
 setting allowance 28000000000000000000000000 to plug/eth pool
 setting allowance 28000000000000000000000000 to plug/usdc pool
 Account balance after: 858790884293934191
+
+
+
+
+
+# otto-premint Kovan
+Plug Token: https://kovan.etherscan.io/address/0x44bc9215EF25eBFD7Be7C3679f20667480814af4
+Staking contract deployed to: https://kovan.etherscan.io/address/0x04AE6Eb857483dd09A82678D1E2CF3F82813BD15
+CommunityVault deployed to: https://kovan.etherscan.io/address/0xFe9c29e5535B5C53E480D07A65782e7A6eA902C3
+YF_LP deployed to: https://kovan.etherscan.io/address/0x77b4aC8086C2699f5F0c164302B15515c78B46E3
