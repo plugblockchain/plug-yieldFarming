@@ -83,3 +83,11 @@ Plug Token: https://kovan.etherscan.io/address/0x44bc9215EF25eBFD7Be7C3679f20667
 Staking contract deployed to: https://kovan.etherscan.io/address/0x04AE6Eb857483dd09A82678D1E2CF3F82813BD15
 CommunityVault deployed to: https://kovan.etherscan.io/address/0xFe9c29e5535B5C53E480D07A65782e7A6eA902C3
 YF_LP deployed to: https://kovan.etherscan.io/address/0x77b4aC8086C2699f5F0c164302B15515c78B46E3
+
+# otto-premint rinkeby 
+Plug Token: https://rinkeby.etherscan.io/address/0xD1F9fD93af2AD6F90829E8415d79973FcFB4c8be
+Staking contract deployed to: https://rinkeby.etherscan.io/address/0x145Bf2d71849856597C05419d62C9B18C8d99862
+CommunityVault deployed to: https://rinkeby.etherscan.io/address/0xD1bE814AA8d9C284489ec0d4a5387d7af8CA648e
+YF_LP deployed to: https://rinkeby.etherscan.io/address/0xCD86483DA756C61C40369020Ed52aFd084733531
+
+ETH-PLUG LP https://rinkeby.etherscan.io/address/0x437a40ca116e56ad629ec849c3087389d73c8b6b

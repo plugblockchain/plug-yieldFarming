@@ -3,8 +3,9 @@ const hre = require("hardhat");
 
 async function main () {
 
-    const tokenContract = await hre.ethers.getContractFactory('USDCToken')
-    const token = await tokenContract.deploy(100000);
+    const tokenContract = await hre.ethers.getContractFactory('PlugToken')
+    const token = await tokenContract.deploy();
+    console.log('PlugToken deployed to:', token.address);
     await token.deployed()
     console.log('token contract deployed to:', token.address);
 

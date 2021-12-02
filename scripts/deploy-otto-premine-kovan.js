@@ -3,9 +3,9 @@ const hre = require("hardhat");
 
 async function main () {
 
-    const plugTokenAddr = '0x44bc9215EF25eBFD7Be7C3679f20667480814af4';
+    const plugTokenAddr = '0xD1F9fD93af2AD6F90829E8415d79973FcFB4c8be';
     const epoch1Start = 1638144000; // Monday November 29, 2021 00:00:00 (am) in time zone UTC (UTC)
-    const epochDuration = 14515200; // 24 weeks, Monday, May 16, 2022 0:00:00 
+    const epochDuration = 345600; // Friday, December 3, 2021 0:00:00  
 
     // const stakingAddr = '0x403Badf2caba8037d9F00bbA02D59e20DB82709D';
     // const cvAddr = '0x80957883d147376ACF8c073c4297E9DD068cd9BC';
