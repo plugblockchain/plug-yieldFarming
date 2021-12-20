@@ -88,6 +88,14 @@ YF_LP deployed to: https://kovan.etherscan.io/address/0x77b4aC8086C2699f5F0c1643
 Plug Token: https://rinkeby.etherscan.io/address/0xD1F9fD93af2AD6F90829E8415d79973FcFB4c8be
 Staking contract deployed to: https://rinkeby.etherscan.io/address/0x145Bf2d71849856597C05419d62C9B18C8d99862
 CommunityVault deployed to: https://rinkeby.etherscan.io/address/0xD1bE814AA8d9C284489ec0d4a5387d7af8CA648e
-YF_LP deployed to: https://rinkeby.etherscan.io/address/0xCD86483DA756C61C40369020Ed52aFd084733531
+YF_1 deployed to: https://rinkeby.etherscan.io/address/0xCD86483DA756C61C40369020Ed52aFd084733531
+YF_2 deployed to: https://rinkeby.etherscan.io/address/0xa7c0bDE1B752c6B152b7B73142995E0102528FfA
 
 ETH-PLUG LP https://rinkeby.etherscan.io/address/0x437a40ca116e56ad629ec849c3087389d73c8b6b
+
+# otto-premining rinkeby with 6 months of epoch duration
+Staking contract deployed [to: ] https://rinkeby.etherscan.io/address/0x403Badf2caba8037d9F00bbA02D59e20DB82709D
+CommunityVault deployed [to: ] https://rinkeby.etherscan.io/address/0x80957883d147376ACF8c073c4297E9DD068cd9BC
+YF_LP deployed [to: ] https://rinkeby.etherscan.io/address/0xAC263eE633B78fce67ADCD324dAdE2D2D9042F7b
+
+YF_LP (250000000) deployed to: https://rinkeby.etherscan.io/address/0x941C8d9EBacEB31fC7442e10b8aa4666ABE57FCc
