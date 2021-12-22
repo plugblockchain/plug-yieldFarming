@@ -5,9 +5,9 @@ const hre = require("hardhat");
 
 async function main () {
 
-    const rewardTokenAddr = '0xD1F9fD93af2AD6F90829E8415d79973FcFB4c8be';
-    const yfAddress = '0x941C8d9EBacEB31fC7442e10b8aa4666ABE57FCc';
-    const cvAddress = '0x80957883d147376ACF8c073c4297E9DD068cd9BC';
+    const rewardTokenAddr = '0x47da5456bc2e1ce391b645ce80f2e97192e4976a';
+    const yfAddress = '0x78Ac220f81f78780B4Ae9037598d6Ee5b096D5F5';
+    const cvAddress = '0x918ea5c939Dd25B202b46e8b5Ee54f54D623f380';
     const mintAmount = 250_000_000;
 
     const [ac1, ac2, ac3] = await hre.ethers.getSigners();
@@ -26,13 +26,13 @@ async function main () {
     const cv = await CV.attach(cvAddress);
 
     // 2 mint to CV
-    const tenPow18 = BigNumber.from(10).pow(18);
-    const amount = BigNumber.from(mintAmount).mul(tenPow18).add(existingAllowanceForYf);
-    await plugToken.mint(cvAddress, amount);
+    // const tenPow18 = BigNumber.from(10).pow(18);
+    // const amount = BigNumber.from(mintAmount).mul(tenPow18).add(existingAllowanceForYf);
+    // await plugToken.mint(cvAddress, amount);
 
     // 3 approve yf
-    await cv.connect(ac1).setAllowance(yfAddress, amount);
-    console.log(`Successfully set allowance cv: ${amount/tenPow18}`);
+    // await cv.connect(ac1).setAllowance(yfAddress, amount);
+    // console.log(`Successfully set allowance cv: ${amount/tenPow18}`);
 }
 
 main()
