@@ -99,3 +99,8 @@ CommunityVault deployed [to: ] https://rinkeby.etherscan.io/address/0x80957883d1
 YF_LP deployed [to: ] https://rinkeby.etherscan.io/address/0xAC263eE633B78fce67ADCD324dAdE2D2D9042F7b
 
 YF_LP (250000000) deployed to: https://rinkeby.etherscan.io/address/0x941C8d9EBacEB31fC7442e10b8aa4666ABE57FCc
+
+# otto-premining mainnet
+Staking contract deployed to: 0x1C899B399998e984a3bBfB99e37BF5C692127154
+CommunityVault deployed to: 0x918ea5c939Dd25B202b46e8b5Ee54f54D623f380
+YF_LP deployed to: 0x78Ac220f81f78780B4Ae9037598d6Ee5b096D5F5
